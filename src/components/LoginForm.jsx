@@ -60,10 +60,11 @@ function LoginForm() {
       <div
         className="
       bg-white px-10 
-      py-5 w-1/3 h-full 
+      py-5 md:w-1/3 h-full 
       mx-auto mt-10 rounded-lg 
       flex flex-col items-center 
-      justify-evenly"
+      justify-evenly
+      "
       >
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">

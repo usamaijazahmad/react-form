@@ -62,7 +62,7 @@ function SignUpForm() {
     <>
       <div
         className="
-      bg-white px-10 py-5 w-1/3 
+      bg-white px-10 py-5 md:w-1/3 
       mx-auto mt-10 
       rounded-lg flex flex-col 
       items-center justify-evenly con"
