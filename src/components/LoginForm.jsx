@@ -1,11 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Input from "./Input";
 import Joi from "joi-browser";
 import { validateProperty } from "../js/validationLogic";
 import Button from "./Button";
 import QuickLink from "./QuickLink";
+import { usersApiUrl } from "../../server/api";
 
 function LoginForm() {
+  useEffect(() => {
+    console.log(usersApiUrl);
+  }, []);
+
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -18,7 +23,7 @@ function LoginForm() {
     password: Joi.string().min(5).max(8).required(),
   };
 
-  const handleSumit = (event) => {
+  const handleSumit = async (event) => {
     event.preventDefault();
     const result = Joi.validate(user, schema, {
       abortEarly: false,
@@ -26,7 +31,17 @@ function LoginForm() {
 
     const { error } = result;
     if (!error) {
-      return alert("Data successfuly received!");
+      let result = await verifyUser(user.email, user.password);
+      if (result === true) {
+        alert("User authenticated!");
+        setErrors({});
+      } else {
+        const errorData = {
+          password: "Invalid username or password!",
+        };
+        setErrors(errorData);
+      }
+      return;
     } else {
       const errorData = {};
       for (let item of error.details) {
@@ -53,6 +68,22 @@ function LoginForm() {
     userData[name] = value;
     setUser(userData);
     setErrors(errorData);
+  };
+
+  const verifyUser = async (emailId, pass) => {
+    const response = await fetch(usersApiUrl);
+    const data = await response.json();
+
+    const userFound = data.some((user) => user.email === emailId);
+    if (userFound) {
+      const user1 = data.filter((user) => user.email === emailId);
+
+      if (user1[0].email === emailId && user1[0].password === pass) {
+        return true;
+      }
+      return false;
+    }
+    return;
   };
 
   return (

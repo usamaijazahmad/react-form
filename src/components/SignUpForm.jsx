@@ -4,6 +4,7 @@ import Joi from "joi-browser";
 import { validateProperty } from "../js/validationLogic";
 import Button from "./Button";
 import QuickLink from "./QuickLink";
+import { usersApiUrl } from "../../server/api";
 
 function SignUpForm() {
   const [user, setUser] = useState({
@@ -20,7 +21,7 @@ function SignUpForm() {
     password: Joi.string().min(5).max(8).required(),
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const result = Joi.validate(user, schema, {
       abortEarly: false,
@@ -28,8 +29,29 @@ function SignUpForm() {
 
     const { error } = result;
     if (!error) {
-      console.log(user);
-      return alert("Data successfuly received!");
+      const emailExists = await isEmailExists(user.email);
+
+      if (emailExists) {
+        const errorData = {
+          email: "This email address is not available!",
+        };
+        setErrors(errorData);
+      } else {
+        fetch(usersApiUrl, {
+          method: "POST",
+          body: JSON.stringify({
+            name: user.name,
+            email: user.email,
+            password: user.password,
+          }),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+          },
+        });
+        alert("You've successfuly signed up!");
+        clearUserState();
+        return;
+      }
     } else {
       const errorData = {};
       for (let item of error.details) {
@@ -56,6 +78,20 @@ function SignUpForm() {
     userData[name] = value;
     setUser(userData);
     setErrors(errorData);
+  };
+
+  const clearUserState = () => {
+    setUser({
+      name: "",
+      email: "",
+      password: "",
+    });
+  };
+
+  const isEmailExists = async (emailId) => {
+    const response = await fetch(usersApiUrl);
+    const data = await response.json();
+    return data.some((user) => user.email === emailId);
   };
 
   return (
