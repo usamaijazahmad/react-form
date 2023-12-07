@@ -5,6 +5,7 @@ import { validateProperty } from "../js/validationLogic";
 import Button from "./Button";
 import QuickLink from "./QuickLink";
 import { usersApiUrl } from "../../server/api";
+import { useNavigate } from "react-router-dom";
 
 function SignUpForm() {
   const [user, setUser] = useState({
@@ -14,6 +15,8 @@ function SignUpForm() {
   });
 
   const [errors, setErrors] = useState({});
+
+  const navigate = useNavigate();
 
   const schema = {
     name: Joi.string().min(3).max(20).required(),
@@ -50,6 +53,7 @@ function SignUpForm() {
         });
         alert("You've successfuly signed up!");
         clearUserState();
+        navigate("/logIn", { state: { emailFromSignUp: user.email } });
         return;
       }
     } else {

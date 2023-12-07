@@ -1,18 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Input from "./Input";
 import Joi from "joi-browser";
 import { validateProperty } from "../js/validationLogic";
 import Button from "./Button";
 import QuickLink from "./QuickLink";
 import { usersApiUrl } from "../../server/api";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext.jsx";
 
 function LoginForm() {
-  useEffect(() => {
-    console.log(usersApiUrl);
-  }, []);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const emailFromSignUp = location.state?.emailFromSignUp || "";
 
   const [user, setUser] = useState({
-    email: "",
+    email: emailFromSignUp,
     password: "",
   });
 
@@ -34,6 +38,8 @@ function LoginForm() {
       let result = await verifyUser(user.email, user.password);
       if (result === true) {
         alert("User authenticated!");
+        login();
+        navigate("/homePage", { state: { myEmailId: user.email } });
         setErrors({});
       } else {
         const errorData = {
