@@ -1,24 +1,24 @@
 import React, { useState } from "react";
-import Input from "../formUtils/Input.jsx";
-import Joi from "joi-browser";
 import { validateProperty } from "../../js/validationLogic.js";
-import Button from "../formUtils/Button.jsx";
-import QuickLink from "../formUtils/QuickLink.jsx";
 import { usersApiUrl } from "../../../server/api.js";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext.jsx";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectUserDataForLogin,
+  setUserDataForLogin,
+  authenticateUser,
+  clearUserStateForLogin,
+  fetchUserData,
+} from "../../app/features/user/userSlice.js";
+import Joi from "joi-browser";
+import Button from "../form/formUtils/Button";
+import QuickLink from "../form/formUtils/QuickLink";
+import Input from "../form/formUtils/Input";
 
 function LoginForm() {
-  const location = useLocation();
   const navigate = useNavigate();
-  const { login } = useAuth();
-
-  const emailFromSignUp = location.state?.emailFromSignUp || "";
-
-  const [user, setUser] = useState({
-    email: emailFromSignUp,
-    password: "",
-  });
+  const dispatch = useDispatch();
+  const user = useSelector(selectUserDataForLogin);
 
   const [errors, setErrors] = useState({});
 
@@ -27,7 +27,7 @@ function LoginForm() {
     password: Joi.string().min(5).max(8).required(),
   };
 
-  const handleSumit = async (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const result = Joi.validate(user, schema, {
       abortEarly: false,
@@ -38,8 +38,13 @@ function LoginForm() {
       let result = await verifyUser(user.email, user.password);
       if (result === true) {
         alert("User authenticated!");
-        login();
-        navigate("/homePage", { state: { myEmailId: user.email } });
+
+        dispatch(authenticateUser());
+        dispatch(clearUserStateForLogin());
+        dispatch(fetchUserData(user.email));
+
+        navigate("/homePage");
+
         setErrors({});
       } else {
         const errorData = {
@@ -72,7 +77,7 @@ function LoginForm() {
     }
     let userData = { ...user };
     userData[name] = value;
-    setUser(userData);
+    dispatch(setUserDataForLogin(userData));
     setErrors(errorData);
   };
 
@@ -129,7 +134,7 @@ function LoginForm() {
             errorMessage={errors.password}
             placeholder="Enter your password here"
           />
-          <Button text="Sign In" onClick={handleSumit} />
+          <Button text="Sign In" onClick={handleSubmit} />
           <QuickLink
             text="Not a member?"
             linkText="Create Account"

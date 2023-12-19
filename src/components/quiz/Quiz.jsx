@@ -1,17 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  selectQuizData,
+  selectQuizAnsData,
+  fetchQuizData,
+  fetchQuizAnsData,
+} from "../../app/features/quiz/quizSlice";
 import SetTimer from "../common/SetTimer";
 
 function Quiz({ myquizName, quizApiUrl, quizAnsApiUrl }) {
-  const [quizData, setQuizData] = useState([]);
-  const [quizAnsData, setQuizAnsData] = useState([]);
   const [quizName, setQuizName] = useState("");
   const [isStart, setIsStart] = useState(false);
   const [showStart, setShowStart] = useState(true);
   const [showEnd, setShowEnd] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
 
+  const quizData = useSelector(selectQuizData);
+  const quizAnsData = useSelector(selectQuizAnsData);
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   let checkBoxes = [];
   let userAns = [];
@@ -23,29 +32,11 @@ function Quiz({ myquizName, quizApiUrl, quizAnsApiUrl }) {
     setShowEnd(false);
     setShowStart(true);
 
-    getQuizdata(quizApiUrl);
-    getQuizAnsdata(quizAnsApiUrl);
+    dispatch(fetchQuizData(quizApiUrl));
+    dispatch(fetchQuizAnsData(quizAnsApiUrl));
+
     setQuizName(myquizName);
   }, []);
-
-  const getQuizdata = async (url) => {
-    const response = await fetch(url);
-    const data = await response.json();
-    setQuizData(data);
-  };
-
-  const getQuizAnsdata = async (url) => {
-    let orgAns = [];
-
-    const response = await fetch(url);
-    const data = await response.json();
-
-    data.forEach((item) => {
-      const ansObj = { answer: item.answer, quesId: item.quesId };
-      orgAns.push(ansObj);
-    });
-    setQuizAnsData(orgAns);
-  };
 
   const handleStartQuiz = () => {
     setIsStart(true);

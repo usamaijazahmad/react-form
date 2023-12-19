@@ -1,6 +1,9 @@
 import React from "react";
-import Quiz from "./Quiz";
-import { chemistryQuizUrl, chemistryQuizAnswersUrl } from "../../../server/api";
+import Quiz from "../Quiz";
+import {
+  chemistryQuizUrl,
+  chemistryQuizAnswersUrl,
+} from "../../../../server/api";
 
 function ChemistryQuiz() {
   return (

@@ -1,6 +1,6 @@
 import React from "react";
-import Quiz from "./Quiz";
-import { mathQuizUrl, mathQuizAnswersUrl } from "../../../server/api";
+import Quiz from "../Quiz";
+import { mathQuizUrl, mathQuizAnswersUrl } from "../../../../server/api";
 
 function MathQuiz() {
   return (

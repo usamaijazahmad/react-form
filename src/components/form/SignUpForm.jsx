@@ -1,19 +1,22 @@
 import React, { useState } from "react";
-import Input from "../formUtils/Input";
-import Joi from "joi-browser";
-import { validateProperty } from "../../js/validationLogic";
-import Button from "../formUtils/Button";
-import QuickLink from "../formUtils/QuickLink";
 import { usersApiUrl } from "../../../server/api";
 import { useNavigate } from "react-router-dom";
+import { validateProperty } from "../../js/validationLogic";
+import { useDispatch } from "react-redux";
+import { setUserDataForLogin } from "../../app/features/user/userSlice";
+import Joi from "joi-browser";
+import Button from "../form/formUtils/Button";
+import QuickLink from "../form/formUtils/QuickLink";
+import Input from "../form/formUtils/Input";
 
 function SignUpForm() {
+  const dispatch = useDispatch();
+
   const [user, setUser] = useState({
     name: "",
     email: "",
     password: "",
   });
-
   const [errors, setErrors] = useState({});
 
   const navigate = useNavigate();
@@ -52,8 +55,10 @@ function SignUpForm() {
           },
         });
         alert("You've successfuly signed up!");
-        clearUserState();
-        navigate("/logIn", { state: { emailFromSignUp: user.email } });
+
+        clearSignedUpUserState();
+        dispatch(setUserDataForLogin({ email: user.email, password: "" }));
+        navigate("/logIn");
         return;
       }
     } else {
@@ -80,22 +85,23 @@ function SignUpForm() {
     }
     let userData = { ...user };
     userData[name] = value;
+
     setUser(userData);
     setErrors(errorData);
-  };
-
-  const clearUserState = () => {
-    setUser({
-      name: "",
-      email: "",
-      password: "",
-    });
   };
 
   const isEmailExists = async (emailId) => {
     const response = await fetch(usersApiUrl);
     const data = await response.json();
     return data.some((user) => user.email === emailId);
+  };
+
+  const clearSignedUpUserState = () => {
+    setUser({
+      name: "",
+      email: "",
+      password: "",
+    });
   };
 
   return (
