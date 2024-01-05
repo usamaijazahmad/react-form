@@ -18,7 +18,11 @@ const initialState = {
 export const fetchUserData = createAsyncThunk(
   "user/fetchUserData",
   async (email) => {
+    const token = localStorage.getItem("accessToken");
+
+    axios.defaults.headers.common["authorization"] = token;
     const response = await axios.get(usersApiUrl);
+
     const usersData = response.data;
     const myUser = usersData.filter((user) => user.email === email);
     return myUser[0];

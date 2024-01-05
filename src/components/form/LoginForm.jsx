@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { validateProperty } from "../../js/validationLogic.js";
-import { usersApiUrl } from "../../../server/api.js";
+import { usersApiUrl, loginApiUrl } from "../../../server/api.js";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -14,6 +14,7 @@ import Joi from "joi-browser";
 import Button from "../form/formUtils/Button";
 import QuickLink from "../form/formUtils/QuickLink";
 import Input from "../form/formUtils/Input";
+import axios from "axios";
 
 function LoginForm() {
   const navigate = useNavigate();
@@ -35,20 +36,28 @@ function LoginForm() {
 
     const { error } = result;
     if (!error) {
-      let result = await verifyUser(user.email, user.password);
-      if (result === true) {
-        alert("User authenticated!");
+      try {
+        const response = await axios.post(loginApiUrl, {
+          email: user.email,
+          password: user.password,
+        });
+        if (response.status === 200) {
+          alert("You successfuly logged in!");
 
-        dispatch(authenticateUser());
-        dispatch(clearUserStateForLogin());
-        dispatch(fetchUserData(user.email));
+          const token = response.data.accessToken;
+          localStorage.setItem("accessToken", token);
 
-        navigate("/homePage");
+          dispatch(authenticateUser());
+          dispatch(clearUserStateForLogin());
+          dispatch(fetchUserData(user.email));
 
-        setErrors({});
-      } else {
+          navigate("/homePage");
+
+          setErrors({});
+        }
+      } catch (err) {
         const errorData = {
-          password: "Invalid username or password!",
+          password: err.response.data,
         };
         setErrors(errorData);
       }
@@ -79,22 +88,6 @@ function LoginForm() {
     userData[name] = value;
     dispatch(setUserDataForLogin(userData));
     setErrors(errorData);
-  };
-
-  const verifyUser = async (emailId, pass) => {
-    const response = await fetch(usersApiUrl);
-    const data = await response.json();
-
-    const userFound = data.some((user) => user.email === emailId);
-    if (userFound) {
-      const user1 = data.filter((user) => user.email === emailId);
-
-      if (user1[0].email === emailId && user1[0].password === pass) {
-        return true;
-      }
-      return false;
-    }
-    return;
   };
 
   return (
