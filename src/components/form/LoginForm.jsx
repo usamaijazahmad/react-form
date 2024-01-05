@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { validateProperty } from "../../js/validationLogic.js";
-import { usersApiUrl, loginApiUrl } from "../../../server/api.js";
+import { loginApiUrl } from "../../../server/api.js";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -27,6 +27,12 @@ function LoginForm() {
     email: Joi.string().email().required(),
     password: Joi.string().min(5).max(8).required(),
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    axios.defaults.headers.common["authorization"] = token;
+    dispatch(authenticateUser());
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();

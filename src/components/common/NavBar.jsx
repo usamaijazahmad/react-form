@@ -1,10 +1,11 @@
 import React, { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 
 function NavBar() {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const navigation = [
     {
@@ -39,6 +40,12 @@ function NavBar() {
     return classes.filter(Boolean).join(" ");
   }
 
+  function logOutUser() {
+    localStorage.removeItem("accessToken");
+
+    navigate("/logIn");
+  }
+
   return (
     <Disclosure as="nav" className="bg-gray-800" id="myNav">
       {({ open }) => (
@@ -71,6 +78,7 @@ function NavBar() {
                       <Link
                         key={item.name}
                         to={item.href}
+                        id={item.name}
                         className={classNames(
                           item.current
                             ? "bg-gray-900 text-white"
@@ -148,6 +156,7 @@ function NavBar() {
                         {({ active }) => (
                           <a
                             href="#"
+                            onClick={logOutUser}
                             className={classNames(
                               active ? "bg-gray-100" : "",
                               "block px-4 py-2 text-sm text-gray-700"

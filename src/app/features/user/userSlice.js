@@ -53,7 +53,12 @@ const userSlice = createSlice({
       state.userDataForLogin = action.payload;
     },
     authenticateUser: (state) => {
-      state.isAuthenticated = true;
+      const token = localStorage.getItem("accessToken");
+      if (token) {
+        state.isAuthenticated = true;
+      } else {
+        state.isAuthenticated = false;
+      }
     },
   },
   extraReducers(builder) {
