@@ -8,6 +8,7 @@ import Joi from "joi-browser";
 import Button from "../form/formUtils/Button";
 import QuickLink from "../form/formUtils/QuickLink";
 import Input from "../form/formUtils/Input";
+import axios from "axios";
 
 function SignUpForm() {
   const dispatch = useDispatch();
@@ -35,31 +36,27 @@ function SignUpForm() {
 
     const { error } = result;
     if (!error) {
-      const emailExists = await isEmailExists(user.email);
-
-      if (emailExists) {
-        const errorData = {
-          email: "This email address is not available!",
-        };
-        setErrors(errorData);
-      } else {
-        fetch(usersApiUrl, {
-          method: "POST",
-          body: JSON.stringify({
-            name: user.name,
-            email: user.email,
-            password: user.password,
-          }),
-          headers: {
-            "Content-type": "application/json; charset=UTF-8",
-          },
+      try {
+        const response = await axios.post(usersApiUrl, {
+          name: user.name,
+          email: user.email,
+          password: user.password,
         });
-        alert("You've successfuly signed up!");
-
-        clearSignedUpUserState();
-        dispatch(setUserDataForLogin({ email: user.email, password: "" }));
-        navigate("/logIn");
-        return;
+        if (response.status === 200) {
+          alert("You've successfuly signed up!");
+          clearSignedUpUserState();
+          dispatch(setUserDataForLogin({ email: user.email, password: "" }));
+          navigate("/logIn");
+          return;
+        }
+      } catch (err) {
+        console.log(err);
+        if (err.response.status === 409) {
+          const errorData = {
+            email: err.response.data,
+          };
+          setErrors(errorData);
+        }
       }
     } else {
       const errorData = {};
@@ -88,12 +85,6 @@ function SignUpForm() {
 
     setUser(userData);
     setErrors(errorData);
-  };
-
-  const isEmailExists = async (emailId) => {
-    const response = await fetch(usersApiUrl);
-    const data = await response.json();
-    return data.some((user) => user.email === emailId);
   };
 
   const clearSignedUpUserState = () => {
