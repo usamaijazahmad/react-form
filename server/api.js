@@ -1,9 +1,9 @@
 //const apiUrl = "https://fake-server-git-main-usama-ijazs-projects.vercel.app";
 //export const apiUrl = "http://localhost:3000";
-export const apiUrl = "http://localhost:8080";
+//export const apiUrl = "http://localhost:8080";
 
-// export const apiUrl =
-//   "https://nodejs-practice-git-main-usama-ijazs-projects.vercel.app";
+export const apiUrl =
+  "https://nodejs-practice-git-main-usama-ijazs-projects.vercel.app";
 
 export const usersApiUrl = apiUrl + "/users";
 export const loginApiUrl = apiUrl + "/login";

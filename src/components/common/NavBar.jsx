@@ -1,11 +1,18 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../../app/features/user/userSlice";
 
 function NavBar() {
+  const [logUser, setLogUser] = useState({});
+
+  let loggedInUser;
+
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const navigation = [
     {
@@ -28,13 +35,30 @@ function NavBar() {
       href: "/chemistryQuiz",
       current: location.pathname === "/chemistryQuiz",
     },
-    { name: "Log In", href: "/logIn", current: location.pathname === "/logIn" },
-    {
-      name: "Sign Up",
-      href: "/signUp",
-      current: location.pathname === "/signUp",
-    },
+
+    ...(logUser
+      ? []
+      : [
+          {
+            name: "Log In",
+            href: "/logIn",
+            current: location.pathname === "/logIn",
+          },
+          {
+            name: "Sign Up",
+            href: "/signUp",
+            current: location.pathname === "/signUp",
+          },
+        ]),
   ];
+
+  useEffect(() => {
+    loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    if (loggedInUser) {
+      dispatch(setUserData());
+    }
+    setLogUser(loggedInUser);
+  }, []);
 
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
@@ -42,6 +66,9 @@ function NavBar() {
 
   function logOutUser() {
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("loggedInUser");
+
+    setLogUser({});
 
     navigate("/logIn");
   }

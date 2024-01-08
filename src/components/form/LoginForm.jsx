@@ -9,6 +9,7 @@ import {
   authenticateUser,
   clearUserStateForLogin,
   fetchUserData,
+  setUserData,
 } from "../../app/features/user/userSlice.js";
 import Joi from "joi-browser";
 import Button from "../form/formUtils/Button";
@@ -31,6 +32,7 @@ function LoginForm() {
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     axios.defaults.headers.common["authorization"] = token;
+
     dispatch(authenticateUser());
   }, []);
 
@@ -50,12 +52,17 @@ function LoginForm() {
         if (response.status === 200) {
           alert("You successfuly logged in!");
 
+          const loggedInUser = response.data.user;
+          localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
+
           const token = response.data.accessToken;
           localStorage.setItem("accessToken", token);
 
           dispatch(authenticateUser());
+
           dispatch(clearUserStateForLogin());
-          dispatch(fetchUserData(user.email));
+          dispatch(fetchUserData(loggedInUser.email));
+          dispatch(setUserData());
 
           navigate("/homePage");
 

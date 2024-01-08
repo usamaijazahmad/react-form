@@ -46,8 +46,11 @@ const userSlice = createSlice({
         name: "",
       };
     },
-    setUserData: (state, action) => {
-      state.userData = action.payload;
+    setUserData: (state) => {
+      const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+      if (loggedInUser) {
+        state.userData = loggedInUser;
+      }
     },
     setUserDataForLogin: (state, action) => {
       state.userDataForLogin = action.payload;
