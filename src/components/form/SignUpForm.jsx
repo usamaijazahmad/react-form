@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { usersApiUrl } from "../../../server/api";
+import { registerApiUrl } from "../../../server/api";
 import { useNavigate } from "react-router-dom";
 import { validateProperty } from "../../js/validationLogic";
 import { useDispatch } from "react-redux";
@@ -37,7 +37,7 @@ function SignUpForm() {
     const { error } = result;
     if (!error) {
       try {
-        const response = await axios.post(usersApiUrl, {
+        const response = await axios.post(registerApiUrl, {
           name: user.name,
           email: user.email,
           password: user.password,

@@ -6,7 +6,7 @@ import { selectIsAuthenticated } from "../app/features/user/userSlice.js";
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
 
-  return isAuthenticated ? children : <Navigate to="/logIn" />;
+  return isAuthenticated ? children : <Navigate to="/notFound" />;
 };
 
 export default ProtectedRoute;

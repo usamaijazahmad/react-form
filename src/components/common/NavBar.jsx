@@ -1,9 +1,13 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setUserData } from "../../app/features/user/userSlice";
+import {
+  authenticateUser,
+  setUserData,
+} from "../../app/features/user/userSlice";
+import axios from "axios";
 
 function NavBar() {
   const location = useLocation();
@@ -44,6 +48,21 @@ function NavBar() {
   ];
 
   useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      document.getElementById("Log In").style.display = "none";
+      document.getElementById("Sign Up").style.display = "none";
+    } else {
+      document.getElementById("Home").style.display = "none";
+      document.getElementById("Math Quiz").style.display = "none";
+      document.getElementById("Physics Quiz").style.display = "none";
+      document.getElementById("Chemistry Quiz").style.display = "none";
+    }
+
+    axios.defaults.headers.common["authorization"] = token;
+
+    dispatch(authenticateUser());
+
     const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
     if (loggedInUser) {
       dispatch(setUserData());
@@ -57,6 +76,12 @@ function NavBar() {
   function logOutUser() {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("loggedInUser");
+    document.getElementById("Log In").style.display = "flex";
+    document.getElementById("Sign Up").style.display = "flex";
+    document.getElementById("Home").style.display = "none";
+    document.getElementById("Math Quiz").style.display = "none";
+    document.getElementById("Physics Quiz").style.display = "none";
+    document.getElementById("Chemistry Quiz").style.display = "none";
 
     navigate("/logIn");
   }

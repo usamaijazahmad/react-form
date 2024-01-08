@@ -1,8 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { validateProperty } from "../../js/validationLogic.js";
-import { loginApiUrl } from "../../../server/api.js";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import {
   selectUserDataForLogin,
   setUserDataForLogin,
@@ -11,6 +7,10 @@ import {
   fetchUserData,
   setUserData,
 } from "../../app/features/user/userSlice.js";
+import { validateProperty } from "../../js/validationLogic.js";
+import { loginApiUrl } from "../../../server/api.js";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import Joi from "joi-browser";
 import Button from "../form/formUtils/Button";
 import QuickLink from "../form/formUtils/QuickLink";
@@ -31,6 +31,17 @@ function LoginForm() {
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
+
+    if (token) {
+      document.getElementById("Log In").style.display = "none";
+      document.getElementById("Sign Up").style.display = "none";
+    } else {
+      document.getElementById("Home").style.display = "none";
+      document.getElementById("Math Quiz").style.display = "none";
+      document.getElementById("Physics Quiz").style.display = "none";
+      document.getElementById("Chemistry Quiz").style.display = "none";
+    }
+
     axios.defaults.headers.common["authorization"] = token;
 
     dispatch(authenticateUser());
@@ -51,6 +62,13 @@ function LoginForm() {
         });
         if (response.status === 200) {
           alert("You successfuly logged in!");
+
+          document.getElementById("Log In").style.display = "none";
+          document.getElementById("Sign Up").style.display = "none";
+          document.getElementById("Home").style.display = "flex";
+          document.getElementById("Math Quiz").style.display = "flex";
+          document.getElementById("Physics Quiz").style.display = "flex";
+          document.getElementById("Chemistry Quiz").style.display = "flex";
 
           const loggedInUser = response.data.user;
           localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
