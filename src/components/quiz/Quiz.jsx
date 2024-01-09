@@ -3,13 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
   selectQuizData,
-  selectQuizAnsData,
   fetchQuizData,
-  fetchQuizAnsData,
 } from "../../app/features/quiz/quizSlice";
 import SetTimer from "../common/SetTimer";
 
-function Quiz({ myquizName, quizApiUrl, quizAnsApiUrl }) {
+function Quiz({ myquizName, quizApiUrl }) {
   const [quizName, setQuizName] = useState("");
   const [isStart, setIsStart] = useState(false);
   const [showStart, setShowStart] = useState(true);
@@ -17,7 +15,6 @@ function Quiz({ myquizName, quizApiUrl, quizAnsApiUrl }) {
   const [showQuiz, setShowQuiz] = useState(false);
 
   const quizData = useSelector(selectQuizData);
-  const quizAnsData = useSelector(selectQuizAnsData);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -33,7 +30,6 @@ function Quiz({ myquizName, quizApiUrl, quizAnsApiUrl }) {
     setShowStart(true);
 
     dispatch(fetchQuizData(quizApiUrl));
-    dispatch(fetchQuizAnsData(quizAnsApiUrl));
 
     setQuizName(myquizName);
   }, []);
@@ -50,7 +46,7 @@ function Quiz({ myquizName, quizApiUrl, quizAnsApiUrl }) {
   const handleEndQuiz = () => {
     if (userAns.length === 10) {
       userAns.sort((a, b) => a.quesId - b.quesId);
-      const result = calculateResult(userAns, quizAnsData);
+      const result = calculateResult(userAns, quizData);
       navBar = document.getElementById("myNav");
       navBar.style.display = "block";
       navigate("/result", { state: { score: result, qzName: myquizName } });
@@ -93,17 +89,14 @@ function Quiz({ myquizName, quizApiUrl, quizAnsApiUrl }) {
   const handleExpire = () => {
     navBar = document.getElementById("myNav");
     navBar.style.display = "block";
-    const result = calculateResult(userAns, quizAnsData);
+    const result = calculateResult(userAns, quizData);
     navigate("/result", { state: { score: result, qzName: myquizName } });
   };
 
   const calculateResult = (arr1, arr2) => {
     let result = 0;
     for (let i = 0; i < arr1.length; i++) {
-      if (
-        arr1[i].answer === arr2[i].answer &&
-        arr1[i].quesId === arr2[i].quesId
-      ) {
+      if (arr1[i].answer === arr2[i].answer && arr1[i].quesId === arr2[i].id) {
         result++;
       }
     }

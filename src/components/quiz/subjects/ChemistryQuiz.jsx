@@ -1,17 +1,13 @@
 import React from "react";
 import Quiz from "../Quiz";
-import {
-  chemistryQuizUrl,
-  chemistryQuizAnswersUrl,
-} from "../../../../server/api";
+import { quizApiUrl } from "../../../../server/api";
 
 function ChemistryQuiz() {
   return (
     <>
       <Quiz
         myquizName="Chemistry Quiz"
-        quizApiUrl={chemistryQuizUrl}
-        quizAnsApiUrl={chemistryQuizAnswersUrl}
+        quizApiUrl={quizApiUrl + "/chemistry"}
       />
     </>
   );
