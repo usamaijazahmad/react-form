@@ -43,7 +43,7 @@ function SignUpForm() {
           password: user.password,
         });
         if (response.status === 200) {
-          alert("You've successfuly signed up!");
+          alert(response.data);
           clearSignedUpUserState();
           dispatch(setUserDataForLogin({ email: user.email, password: "" }));
           navigate("/logIn");
