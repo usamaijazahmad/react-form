@@ -8,6 +8,9 @@ const initialState = {
 export const fetchQuizData = createAsyncThunk(
   "quiz/fetchQuizData",
   async (url) => {
+    const token = localStorage.getItem("accessToken");
+
+    axios.defaults.headers.common["authorization"] = token;
     const response = await axios.get(url);
     return [...response.data];
   }

@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { usersApiUrl } from "../../../../server/api";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 const initialState = {
   userDataForLogin: {
@@ -14,20 +15,6 @@ const initialState = {
   },
   isAuthenticated: false,
 };
-
-export const fetchUserData = createAsyncThunk(
-  "user/fetchUserData",
-  async (email) => {
-    const token = localStorage.getItem("accessToken");
-
-    axios.defaults.headers.common["authorization"] = token;
-    const response = await axios.get(usersApiUrl);
-
-    const usersData = response.data;
-    const myUser = usersData.filter((user) => user.email === email);
-    return myUser[0];
-  }
-);
 
 const userSlice = createSlice({
   name: "user",
@@ -47,9 +34,10 @@ const userSlice = createSlice({
       };
     },
     setUserData: (state) => {
-      const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-      if (loggedInUser) {
-        state.userData = loggedInUser;
+      const token = localStorage.getItem("accessToken");
+      if (token) {
+        const { data } = jwtDecode(token);
+        state.userData = data;
       }
     },
     setUserDataForLogin: (state, action) => {
@@ -63,12 +51,6 @@ const userSlice = createSlice({
         state.isAuthenticated = false;
       }
     },
-  },
-  extraReducers(builder) {
-    builder.addCase(fetchUserData.fulfilled, (state, action) => {
-      const loadedUser = action.payload;
-      state.userData = loadedUser;
-    });
   },
 });
 

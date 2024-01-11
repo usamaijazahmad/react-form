@@ -50,6 +50,7 @@ function NavBar() {
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
+      dispatch(setUserData());
       document.getElementById("Log In").style.display = "none";
       document.getElementById("Sign Up").style.display = "none";
     } else {
@@ -62,11 +63,6 @@ function NavBar() {
     axios.defaults.headers.common["authorization"] = token;
 
     dispatch(authenticateUser());
-
-    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-    if (loggedInUser) {
-      dispatch(setUserData());
-    }
   }, []);
 
   function classNames(...classes) {

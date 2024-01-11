@@ -4,7 +4,6 @@ import {
   setUserDataForLogin,
   authenticateUser,
   clearUserStateForLogin,
-  fetchUserData,
   setUserData,
 } from "../../app/features/user/userSlice.js";
 import { validateProperty } from "../../js/validationLogic.js";
@@ -70,16 +69,12 @@ function LoginForm() {
           document.getElementById("Physics Quiz").style.display = "flex";
           document.getElementById("Chemistry Quiz").style.display = "flex";
 
-          const loggedInUser = response.data.user;
-          localStorage.setItem("loggedInUser", JSON.stringify(loggedInUser));
-
           const token = response.data.accessToken;
           localStorage.setItem("accessToken", token);
 
           dispatch(authenticateUser());
 
           dispatch(clearUserStateForLogin());
-          dispatch(fetchUserData(loggedInUser.email));
           dispatch(setUserData());
 
           navigate("/homePage");
