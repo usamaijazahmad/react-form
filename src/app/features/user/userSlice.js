@@ -1,12 +1,16 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { usersApiUrl } from "../../../../server/api";
-import axios from "axios";
+import { createSlice } from "@reduxjs/toolkit";
 import { jwtDecode } from "jwt-decode";
 
 const initialState = {
   userDataForLogin: {
     email: "",
     password: "",
+  },
+  userDataForVerifyEmail: {
+    email: "",
+  },
+  userDataForOtpVerify: {
+    otp: "",
   },
   userData: {
     email: "",
@@ -26,6 +30,16 @@ const userSlice = createSlice({
         password: "",
       };
     },
+    clearUserStateForVerifyEmail: (state) => {
+      state.userDataForVerifyEmail = {
+        email: "",
+      };
+    },
+    clearUserStateForOtpVerify: (state) => {
+      state.userDataForOtpVerify = {
+        otp: "",
+      };
+    },
     clearUserState: (state) => {
       state.userData = {
         email: "",
@@ -43,6 +57,12 @@ const userSlice = createSlice({
     setUserDataForLogin: (state, action) => {
       state.userDataForLogin = action.payload;
     },
+    setUserDataForVerifyEmail: (state, action) => {
+      state.userDataForVerifyEmail = action.payload;
+    },
+    setUserDataForOtpVerify: (state, action) => {
+      state.userDataForOtpVerify = action.payload;
+    },
     authenticateUser: (state) => {
       const token = localStorage.getItem("accessToken");
       if (token) {
@@ -57,12 +77,20 @@ const userSlice = createSlice({
 export const {
   setUserData,
   setUserDataForLogin,
+  setUserDataForVerifyEmail,
+  setUserDataForOtpVerify,
   clearUserState,
   authenticateUser,
   clearUserStateForLogin,
+  clearUserStateForVerifyEmail,
+  clearUserStateForOtpVerify,
 } = userSlice.actions;
 export const selectUserData = (state) => state.user.userData;
 export const selectUserDataForLogin = (state) => state.user.userDataForLogin;
+export const selectUserDataForVerifyEmail = (state) =>
+  state.user.userDataForVerifyEmail;
+export const selectUserDataForOtpVerify = (state) =>
+  state.user.userDataForOtpVerify;
 export const selectIsAuthenticated = (state) => state.user.isAuthenticated;
 
 export default userSlice.reducer;

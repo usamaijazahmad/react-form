@@ -18,6 +18,8 @@ import { store } from "./app/store.js";
 import "../src/index.css";
 import "../src/App.css";
 import NotFound from "./components/common/NotFound.jsx";
+import VerifyEmail from "./components/form/VerifyEmail.jsx";
+import OtpVerify from "./components/form/OtpVerify.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
@@ -26,6 +28,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <Routes>
         <Route path="/signUp" element={<SignUpForm />}></Route>
         <Route path="/logIn" element={<LoginForm />}></Route>
+        <Route path="/verifyEmail" element={<VerifyEmail />}></Route>
+        <Route path="/verifyOtp" element={<OtpVerify />}></Route>
         <Route path="/notFound" element={<NotFound />}></Route>
         <Route
           path="/physicsQuiz"

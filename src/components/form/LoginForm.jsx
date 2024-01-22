@@ -39,6 +39,7 @@ function LoginForm() {
       document.getElementById("Math Quiz").style.display = "none";
       document.getElementById("Physics Quiz").style.display = "none";
       document.getElementById("Chemistry Quiz").style.display = "none";
+      document.getElementById("userProf").style.display = "none";
     }
 
     axios.defaults.headers.common["authorization"] = token;
@@ -68,6 +69,7 @@ function LoginForm() {
           document.getElementById("Math Quiz").style.display = "flex";
           document.getElementById("Physics Quiz").style.display = "flex";
           document.getElementById("Chemistry Quiz").style.display = "flex";
+          document.getElementById("userProf").style.display = "flex";
 
           const token = response.data.accessToken;
           localStorage.setItem("accessToken", token);
@@ -159,6 +161,7 @@ function LoginForm() {
             linkText="Create Account"
             link="/signUp"
           />
+          <QuickLink linkText="Verify Email" link="/verifyEmail" />
         </form>
       </div>
     </>

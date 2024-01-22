@@ -4,6 +4,7 @@ function Button(props) {
   return (
     <div className="w-full">
       <button
+        id={props.id}
         type="submit"
         onClick={props.onClick}
         className="flex w-full justify-center rounded-3xl
