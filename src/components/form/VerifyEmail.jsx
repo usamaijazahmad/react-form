@@ -80,6 +80,7 @@ function VerifyEmail() {
       }
       return;
     } else {
+      document.getElementById("myBtn").style.display = "flex";
       const errorData = {};
       for (let item of error.details) {
         const name = item.path[0];
