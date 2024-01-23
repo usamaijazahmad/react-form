@@ -4,35 +4,33 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { usersApiUrl } from "../../../server/api.js";
 import {
-  clearUserStateForOtpVerify,
-  selectUserDataForOtpVerify,
+  clearUserStateForNewPassword,
+  selectUserDataForNewPassword,
   setUserDataForLogin,
-  setUserDataForOtpVerify,
+  setUserDataForNewPassword,
 } from "../../app/features/user/userSlice.js";
 import Input from "../form/formUtils/Input";
 import Button from "../form/formUtils/Button";
 import Joi from "joi-browser";
 import axios from "axios";
 
-function OtpVerify() {
+function NewPassword() {
   const [errors, setErrors] = useState({});
 
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const user = useSelector(selectUserDataForOtpVerify);
+  const user = useSelector(selectUserDataForNewPassword);
 
   const userId = location.state ? location.state.userId : "";
-  const otp = location.state ? location.state.otp : "";
-  const headerVal = location.state ? location.state.headerVal : "";
 
   const schema = {
-    otp: Joi.number().integer().min(1000).max(9999).required(),
+    password: Joi.string().min(5).max(8).required(),
   };
 
   useEffect(() => {
-    dispatch(clearUserStateForOtpVerify());
+    dispatch(clearUserStateForNewPassword());
   }, []);
 
   const handleSubmit = async (event) => {
@@ -43,17 +41,11 @@ function OtpVerify() {
 
     const { error } = result;
     if (!error) {
-      if (headerVal === "true" && otp === Number(user.otp)) {
-        alert("OTP verified!");
-        navigate("/newPassword", {
-          state: { userId: userId },
-        });
-        return;
-      } else if (otp === Number(user.otp)) {
-        alert("Your email has been successfuly verified!");
+      if (userId) {
+        alert("Your password has been successfuly changed!");
 
         const response = await axios.put(usersApiUrl + `/${userId}`, {
-          emailIsValid: true,
+          password: user.password,
         });
 
         const ourUser = response.data;
@@ -62,10 +54,10 @@ function OtpVerify() {
 
         navigate("/logIn");
 
-        dispatch(clearUserStateForOtpVerify());
+        dispatch(clearUserStateForNewPassword());
       } else {
         const errorData = {
-          otp: "Invalid otp!",
+          password: "No user found!",
         };
         setErrors(errorData);
       }
@@ -95,7 +87,7 @@ function OtpVerify() {
 
     let userData = { ...user };
     userData[name] = value;
-    dispatch(setUserDataForOtpVerify(userData));
+    dispatch(setUserDataForNewPassword(userData));
     setErrors(errorData);
   };
 
@@ -111,24 +103,24 @@ function OtpVerify() {
     >
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          We have sent you a four digit OTP on your email
+          New Password
         </h2>
       </div>
       <form className="w-full h-3/4 space-y-6 flex flex-col items-center justify-center">
         <Input
-          label="Four-digit OTP"
-          id="otp"
-          name="otp"
-          type="text"
-          placeholder="Enter your four-digit otp here"
+          label="Password"
+          id="password"
+          name="password"
+          type="password"
+          placeholder="Enter your new Password here"
           onChange={handleOnChange}
-          value={user.otp}
-          errorMessage={errors.otp}
+          value={user.password}
+          errorMessage={errors.password}
         />
-        <Button text="Verify" onClick={handleSubmit} />
+        <Button text="Change Password" onClick={handleSubmit} />
       </form>
     </div>
   );
 }
 
-export default OtpVerify;
+export default NewPassword;

@@ -8,7 +8,7 @@ import {
 } from "../../app/features/user/userSlice.js";
 import { validateProperty } from "../../js/validationLogic.js";
 import { loginApiUrl } from "../../../server/api.js";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Joi from "joi-browser";
 import Button from "../form/formUtils/Button";
@@ -156,11 +156,25 @@ function LoginForm() {
             placeholder="Enter your password here"
           />
           <Button text="Sign In" onClick={handleSubmit} />
-          <QuickLink
-            text="Not a member?"
-            linkText="Create Account"
-            link="/signUp"
-          />
+          <div className="mt-10 text-sm text-gray-500 w-full flex items-center justify-between">
+            <div>
+              Not a member?{" "}
+              <Link
+                to="/signUp"
+                className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+              >
+                Create Account
+              </Link>
+            </div>
+            <span
+              onClick={() => {
+                navigate("/verifyEmail", { state: { forget: true } });
+              }}
+              className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+            >
+              Forgot Password?
+            </span>
+          </div>
           <QuickLink linkText="Verify Email" link="/verifyEmail" />
         </form>
       </div>

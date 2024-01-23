@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { validateProperty } from "../../js/validationLogic.js";
 import { verifyEmailApiUrl } from "../../../server/api.js";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { TailSpin } from "react-loader-spinner";
 import {
   clearUserStateForVerifyEmail,
@@ -20,7 +20,10 @@ function VerifyEmail() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+
   const user = useSelector(selectUserDataForVerifyEmail);
+  const forget = location.state ? location.state.forget : "";
 
   const schema = {
     email: Joi.string().email().required(),
@@ -43,15 +46,26 @@ function VerifyEmail() {
     const { error } = result;
     if (!error) {
       try {
-        const response = await axios.post(verifyEmailApiUrl, {
-          email: user.email,
-        });
+        const headers = forget ? { forget: forget } : {};
+
+        const response = await axios.post(
+          verifyEmailApiUrl,
+          {
+            email: user.email,
+          },
+          { headers }
+        );
 
         if (response.status === 200) {
           const otp = response.data.otp;
           const userId = response.data.id;
+          const headerVal = response.data.headerVal
+            ? response.data.headerVal
+            : "";
 
-          navigate("/verifyOtp", { state: { userId: userId, otp: otp } });
+          navigate("/verifyOtp", {
+            state: { userId: userId, otp: otp, headerVal: headerVal },
+          });
 
           dispatch(clearUserStateForVerifyEmail());
         }
