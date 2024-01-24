@@ -52,7 +52,7 @@ function NewPassword() {
 
         dispatch(setUserDataForLogin({ email: ourUser.email, password: "" }));
 
-        navigate("/logIn");
+        navigate("/logIn", { state: { cleardata: false } });
 
         dispatch(clearUserStateForNewPassword());
       } else {

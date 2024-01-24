@@ -46,7 +46,7 @@ function SignUpForm() {
           alert(response.data);
           clearSignedUpUserState();
           dispatch(setUserDataForLogin({ email: user.email, password: "" }));
-          navigate("/logIn");
+          navigate("/logIn", { state: { cleardata: false } });
           return;
         }
       } catch (err) {

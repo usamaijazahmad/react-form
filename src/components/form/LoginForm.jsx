@@ -8,7 +8,7 @@ import {
 } from "../../app/features/user/userSlice.js";
 import { validateProperty } from "../../js/validationLogic.js";
 import { loginApiUrl } from "../../../server/api.js";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Joi from "joi-browser";
 import Button from "../form/formUtils/Button";
@@ -18,10 +18,13 @@ import axios from "axios";
 
 function LoginForm() {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const user = useSelector(selectUserDataForLogin);
 
   const [errors, setErrors] = useState({});
+
+  const clearData = location.state ? location.state.clearData : true;
 
   const schema = {
     email: Joi.string().email().required(),
@@ -29,6 +32,10 @@ function LoginForm() {
   };
 
   useEffect(() => {
+    if (clearData === true) {
+      dispatch(clearUserStateForLogin());
+    }
+
     const token = localStorage.getItem("accessToken");
 
     if (token) {

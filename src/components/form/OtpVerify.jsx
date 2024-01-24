@@ -60,7 +60,7 @@ function OtpVerify() {
 
         dispatch(setUserDataForLogin({ email: ourUser.email, password: "" }));
 
-        navigate("/logIn");
+        navigate("/logIn", { state: { cleardata: false } });
 
         dispatch(clearUserStateForOtpVerify());
       } else {
