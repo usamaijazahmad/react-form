@@ -21,17 +21,58 @@ import NotFound from "./components/common/NotFound.jsx";
 import VerifyEmail from "./components/form/VerifyEmail.jsx";
 import OtpVerify from "./components/form/OtpVerify.jsx";
 import NewPassword from "./components/form/NewPassword.jsx";
+import ProtectedRoute2 from "./protectedRoutes/ProtectedRoute2.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <Provider store={store}>
       <NavBar />
       <Routes>
-        <Route path="/signUp" element={<SignUpForm />}></Route>
-        <Route path="/logIn" element={<LoginForm />}></Route>
+        <Route
+          path="/signUp"
+          element={
+            <ProtectedRoute2>
+              <SignUpForm />
+            </ProtectedRoute2>
+          }
+        />
+        <Route
+          path="/logIn"
+          element={
+            <ProtectedRoute2>
+              <LoginForm />
+            </ProtectedRoute2>
+          }
+        />
+        <Route
+          path="/verifyEmail"
+          element={
+            <ProtectedRoute2>
+              <VerifyEmail />
+            </ProtectedRoute2>
+          }
+        />
+        <Route
+          path="/verifyOtp"
+          element={
+            <ProtectedRoute2>
+              <OtpVerify />
+            </ProtectedRoute2>
+          }
+        />
+        <Route
+          path="/newPassword"
+          element={
+            <ProtectedRoute2>
+              <NewPassword />
+            </ProtectedRoute2>
+          }
+        />
+        {/* <Route path="/signUp" element={<SignUpForm />}></Route> */}
+        {/* <Route path="/logIn" element={<LoginForm />}></Route>
         <Route path="/verifyEmail" element={<VerifyEmail />}></Route>
         <Route path="/verifyOtp" element={<OtpVerify />}></Route>
-        <Route path="/newPassword" element={<NewPassword />}></Route>
+        <Route path="/newPassword" element={<NewPassword />}></Route> */}
         <Route path="/notFound" element={<NotFound />}></Route>
         <Route
           path="/physicsQuiz"

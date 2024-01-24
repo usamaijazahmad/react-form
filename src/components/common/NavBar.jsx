@@ -81,6 +81,8 @@ function NavBar() {
     document.getElementById("Chemistry Quiz").style.display = "none";
     document.getElementById("userProf").style.display = "none";
 
+    dispatch(authenticateUser());
+
     navigate("/logIn");
   }
 
