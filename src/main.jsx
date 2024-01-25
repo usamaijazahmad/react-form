@@ -9,6 +9,11 @@ import PhysicsQuiz from "./components/quiz/subjects/PhysicsQuiz.jsx";
 import MathQuiz from "./components/quiz/subjects/MathQuiz.jsx";
 import ChemistryQuiz from "./components/quiz/subjects/ChemistryQuiz.jsx";
 import HomePage from "./components/home/HomePage.jsx";
+import NotFound from "./components/common/NotFound.jsx";
+import VerifyEmail from "./components/form/VerifyEmail.jsx";
+import OtpVerify from "./components/form/OtpVerify.jsx";
+import NewPassword from "./components/form/NewPassword.jsx";
+import ProtectedRoute2 from "./protectedRoutes/ProtectedRoute2.jsx";
 
 import ProtectedRoute from "./protectedRoutes/ProtectedRoute.jsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -17,11 +22,6 @@ import { store } from "./app/store.js";
 
 import "../src/index.css";
 import "../src/App.css";
-import NotFound from "./components/common/NotFound.jsx";
-import VerifyEmail from "./components/form/VerifyEmail.jsx";
-import OtpVerify from "./components/form/OtpVerify.jsx";
-import NewPassword from "./components/form/NewPassword.jsx";
-import ProtectedRoute2 from "./protectedRoutes/ProtectedRoute2.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
@@ -68,11 +68,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             </ProtectedRoute2>
           }
         />
-        {/* <Route path="/signUp" element={<SignUpForm />}></Route> */}
-        {/* <Route path="/logIn" element={<LoginForm />}></Route>
-        <Route path="/verifyEmail" element={<VerifyEmail />}></Route>
-        <Route path="/verifyOtp" element={<OtpVerify />}></Route>
-        <Route path="/newPassword" element={<NewPassword />}></Route> */}
         <Route path="/notFound" element={<NotFound />}></Route>
         <Route
           path="/physicsQuiz"
