@@ -15,11 +15,7 @@ const initialState = {
   userDataForNewPassword: {
     password: "",
   },
-  userData: {
-    email: "",
-    password: "",
-    name: "",
-  },
+  userData: {},
   isAuthenticated: false,
 };
 

@@ -2,10 +2,11 @@ import React, { Fragment, useEffect } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useLocation, Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   authenticateUser,
   setUserData,
+  selectUserData,
 } from "../../app/features/user/userSlice";
 import axios from "axios";
 
@@ -13,6 +14,8 @@ function NavBar() {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const user = useSelector(selectUserData);
 
   const navigation = [
     {
@@ -154,7 +157,7 @@ function NavBar() {
                       <span className="sr-only">Open user menu</span>
                       <img
                         className="h-8 w-8 rounded-full"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                        src={user.image_url ? user.image_url : "/user.png"}
                         alt=""
                       />
                     </Menu.Button>

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { validateProperty } from "../../js/validationLogic";
 import { useDispatch } from "react-redux";
 import { setUserDataForLogin } from "../../app/features/user/userSlice";
+import { TailSpin } from "react-loader-spinner";
 import Joi from "joi-browser";
 import Button from "../form/formUtils/Button";
 import QuickLink from "../form/formUtils/QuickLink";
@@ -19,6 +20,8 @@ function SignUpForm() {
     password: "",
   });
   const [errors, setErrors] = useState({});
+  const [showSpinner, setShowSpinner] = useState(false);
+  const [file, setFile] = useState(null);
 
   const navigate = useNavigate();
 
@@ -30,6 +33,11 @@ function SignUpForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    setShowSpinner(true);
+    document.getElementById("myBtn").style.display = "none";
+    document.getElementById("myLink").style.display = "none";
+
     const result = Joi.validate(user, schema, {
       abortEarly: false,
     });
@@ -37,19 +45,25 @@ function SignUpForm() {
     const { error } = result;
     if (!error) {
       try {
-        const response = await axios.post(registerApiUrl, {
-          name: user.name,
-          email: user.email,
-          password: user.password,
-        });
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("name", user.name);
+        formData.append("email", user.email);
+        formData.append("password", user.password);
+
+        const response = await axios.post(registerApiUrl, formData);
+
         if (response.status === 200) {
           alert(response.data);
           clearSignedUpUserState();
           dispatch(setUserDataForLogin({ email: user.email, password: "" }));
           navigate("/logIn", { state: { cleardata: false } });
+
           return;
         }
       } catch (err) {
+        document.getElementById("myBtn").style.display = "flex";
+        document.getElementById("myLink").style.display = "flex";
         console.log(err);
         if (err.response.status === 409) {
           const errorData = {
@@ -57,8 +71,12 @@ function SignUpForm() {
           };
           setErrors(errorData);
         }
+      } finally {
+        setShowSpinner(false);
       }
     } else {
+      document.getElementById("myBtn").style.display = "flex";
+      document.getElementById("myLink").style.display = "flex";
       const errorData = {};
       for (let item of error.details) {
         const name = item.path[0];
@@ -67,8 +85,13 @@ function SignUpForm() {
       }
 
       setErrors(errorData);
+      setShowSpinner(false);
       return errorData;
     }
+  };
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
   };
 
   const handleOnChange = (event) => {
@@ -145,15 +168,27 @@ function SignUpForm() {
             id="file"
             name="file"
             type="file"
+            onChange={handleFileChange}
           />
 
-          <Button text="Sign Up" onClick={handleSubmit} />
+          <Button id="myBtn" text="Sign Up" onClick={handleSubmit} />
           <QuickLink
+            id="myLink"
             text="Already have an account?"
             linkText="Sign In"
             link="/logIn"
           />
         </form>
+        <TailSpin
+          visible={showSpinner}
+          height="60"
+          width="60"
+          color="blue"
+          ariaLabel="tail-spin-loading"
+          radius="2"
+          wrapperStyle={{}}
+          wrapperClass=""
+        />
       </div>
     </>
   );
