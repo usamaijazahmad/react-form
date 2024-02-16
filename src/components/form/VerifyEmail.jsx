@@ -64,7 +64,12 @@ function VerifyEmail() {
             : "";
 
           navigate("/verifyOtp", {
-            state: { userId: userId, otp: otp, headerVal: headerVal },
+            state: {
+              userId: userId,
+              userEmail: user.email,
+              otp: otp,
+              headerVal: headerVal,
+            },
           });
 
           dispatch(clearUserStateForVerifyEmail());
@@ -121,7 +126,7 @@ function VerifyEmail() {
     >
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          Verify Your Email
+          Enter Your Registered Email
         </h2>
       </div>
       <form className="w-full h-3/4 space-y-6 flex flex-col items-center justify-center">

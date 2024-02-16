@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
 import {
   selectQuizData,
   fetchQuizData,
@@ -51,7 +52,7 @@ function Quiz({ myquizName, quizApiUrl }) {
       navBar.style.display = "block";
       navigate("/result", { state: { score: result, qzName: myquizName } });
     } else {
-      alert("You must attempt every question!");
+      toast.error("You must attempt every question!");
     }
   };
 
@@ -149,7 +150,15 @@ function Quiz({ myquizName, quizApiUrl }) {
           <div></div>
         )}
 
-        {isStart ? <SetTimer handleExpire={handleExpire} /> : <div></div>}
+        {isStart ? (
+          <SetTimer
+            timeInSeconds={120}
+            size="50px"
+            handleExpire={handleExpire}
+          />
+        ) : (
+          <div></div>
+        )}
 
         {showQuiz ? (
           quizData.map((item) => (
@@ -203,6 +212,12 @@ function Quiz({ myquizName, quizApiUrl }) {
           <div></div>
         )}
       </div>
+      <ToastContainer
+        hideProgressBar="true"
+        position="top-center"
+        autoClose={3000}
+        theme="dark"
+      />
     </>
   );
 }

@@ -18,6 +18,7 @@ function Input(props) {
             placeholder={props.placeholder}
             value={props.value}
             onChange={props.onChange}
+            maxLength={props.length}
             className="block w-full 
             rounded-3xl border-0 py-1.5
            text-gray-900 shadow-sm ring-1 ring-inset 

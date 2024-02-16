@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTimer } from "react-timer-hook";
 
-function SetTimer({ handleExpire }) {
+function SetTimer({ handleExpire, timeInSeconds, size }) {
   const [timerVisibility, setTimerVisibility] = useState(true);
 
   const { seconds, minutes, hours, days, restart } = useTimer({
@@ -13,7 +13,7 @@ function SetTimer({ handleExpire }) {
 
   useEffect(() => {
     const time = new Date();
-    time.setSeconds(time.getSeconds() + 120);
+    time.setSeconds(time.getSeconds() + timeInSeconds);
     restart(time);
   }, []);
 
@@ -21,7 +21,7 @@ function SetTimer({ handleExpire }) {
     <>
       {timerVisibility ? (
         <div className="bg-gray-300 px-3 py-2 mt-4 mb-7 rounded-lg">
-          <div style={{ fontSize: "50px" }}>
+          <div style={{ fontSize: size }}>
             <span>{days}</span>:<span>{hours}</span>:<span>{minutes}</span>:
             <span>{seconds}</span>
           </div>

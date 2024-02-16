@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 function QuickLink(props) {
   return (
-    <p id={props.id} className="mt-10 text-sm text-gray-500 w-full">
+    <p id={props.id} className="text-sm text-gray-500 w-full">
       {props.text}{" "}
       <Link
         to={props.link}

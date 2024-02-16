@@ -10,6 +10,8 @@ import { validateProperty } from "../../js/validationLogic.js";
 import { loginApiUrl } from "../../../server/api.js";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Joi from "joi-browser";
 import Button from "../form/formUtils/Button";
 import QuickLink from "../form/formUtils/QuickLink";
@@ -68,27 +70,29 @@ function LoginForm() {
           password: user.password,
         });
         if (response.status === 200) {
-          alert("You successfuly logged in!");
+          toast.success("You successfully logged in!", {
+            onClose: () => {
+              document.getElementById("Log In").style.display = "none";
+              document.getElementById("Sign Up").style.display = "none";
+              document.getElementById("Home").style.display = "flex";
+              document.getElementById("Math Quiz").style.display = "flex";
+              document.getElementById("Physics Quiz").style.display = "flex";
+              document.getElementById("Chemistry Quiz").style.display = "flex";
+              document.getElementById("userProf").style.display = "flex";
 
-          document.getElementById("Log In").style.display = "none";
-          document.getElementById("Sign Up").style.display = "none";
-          document.getElementById("Home").style.display = "flex";
-          document.getElementById("Math Quiz").style.display = "flex";
-          document.getElementById("Physics Quiz").style.display = "flex";
-          document.getElementById("Chemistry Quiz").style.display = "flex";
-          document.getElementById("userProf").style.display = "flex";
+              const token = response.data.accessToken;
+              localStorage.setItem("accessToken", token);
 
-          const token = response.data.accessToken;
-          localStorage.setItem("accessToken", token);
+              dispatch(authenticateUser());
 
-          dispatch(authenticateUser());
+              dispatch(clearUserStateForLogin());
+              dispatch(setUserData());
 
-          dispatch(clearUserStateForLogin());
-          dispatch(setUserData());
+              navigate("/homePage");
 
-          navigate("/homePage");
-
-          setErrors({});
+              setErrors({});
+            },
+          });
         }
       } catch (err) {
         const errorData = {
@@ -174,6 +178,7 @@ function LoginForm() {
               </Link>
             </div>
             <span
+              style={{ cursor: "pointer" }}
               onClick={() => {
                 navigate("/verifyEmail", { state: { forget: true } });
               }}
@@ -182,9 +187,14 @@ function LoginForm() {
               Forgot Password?
             </span>
           </div>
-          <QuickLink linkText="Verify Email" link="/verifyEmail" />
         </form>
       </div>
+      <ToastContainer
+        hideProgressBar="true"
+        position="top-center"
+        autoClose={1000}
+        theme="dark"
+      />
     </>
   );
 }

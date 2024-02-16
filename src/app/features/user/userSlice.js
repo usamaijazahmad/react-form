@@ -6,6 +6,11 @@ const initialState = {
     email: "",
     password: "",
   },
+  userDataForSignup: {
+    name: "",
+    email: "",
+    password: "",
+  },
   userDataForVerifyEmail: {
     email: "",
   },
@@ -17,6 +22,7 @@ const initialState = {
   },
   userData: {},
   isAuthenticated: false,
+  emailIsValid: false,
 };
 
 const userSlice = createSlice({
@@ -27,6 +33,13 @@ const userSlice = createSlice({
       state.userDataForLogin = {
         email: "",
         password: "",
+      };
+    },
+    clearUserStateForSignup: (state) => {
+      state.userDataForSignup = {
+        email: "",
+        password: "",
+        name: "",
       };
     },
     clearUserStateForVerifyEmail: (state) => {
@@ -61,6 +74,9 @@ const userSlice = createSlice({
     setUserDataForLogin: (state, action) => {
       state.userDataForLogin = action.payload;
     },
+    setUserDataForSignup: (state, action) => {
+      state.userDataForSignup = action.payload;
+    },
     setUserDataForVerifyEmail: (state, action) => {
       state.userDataForVerifyEmail = action.payload;
     },
@@ -78,24 +94,31 @@ const userSlice = createSlice({
         state.isAuthenticated = false;
       }
     },
+    setEmailIsValid: (state, action) => {
+      state.emailIsValid = action.payload;
+    },
   },
 });
 
 export const {
   setUserData,
   setUserDataForLogin,
+  setUserDataForSignup,
+  setEmailIsValid,
   setUserDataForVerifyEmail,
   setUserDataForOtpVerify,
   setUserDataForNewPassword,
   clearUserState,
   authenticateUser,
   clearUserStateForLogin,
+  clearUserStateForSignup,
   clearUserStateForVerifyEmail,
   clearUserStateForOtpVerify,
   clearUserStateForNewPassword,
 } = userSlice.actions;
 export const selectUserData = (state) => state.user.userData;
 export const selectUserDataForLogin = (state) => state.user.userDataForLogin;
+export const selectUserDataForSignup = (state) => state.user.userDataForSignup;
 export const selectUserDataForVerifyEmail = (state) =>
   state.user.userDataForVerifyEmail;
 export const selectUserDataForOtpVerify = (state) =>
@@ -103,5 +126,6 @@ export const selectUserDataForOtpVerify = (state) =>
 export const selectUserDataForNewPassword = (state) =>
   state.user.userDataForNewPassword;
 export const selectIsAuthenticated = (state) => state.user.isAuthenticated;
+export const selectEmailIsValid = (state) => state.user.emailIsValid;
 
 export default userSlice.reducer;

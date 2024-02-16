@@ -1,10 +1,19 @@
-import React, { useState } from "react";
-import { registerApiUrl } from "../../../server/api";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { registerApiUrl, verifyEmailApiUrl } from "../../../server/api";
+import { useNavigate, useLocation } from "react-router-dom";
 import { validateProperty } from "../../js/validationLogic";
-import { useDispatch } from "react-redux";
-import { setUserDataForLogin } from "../../app/features/user/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setUserDataForLogin,
+  setUserDataForSignup,
+  setEmailIsValid,
+  clearUserStateForSignup,
+  selectUserDataForSignup,
+  selectEmailIsValid,
+} from "../../app/features/user/userSlice";
 import { TailSpin } from "react-loader-spinner";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Joi from "joi-browser";
 import Button from "../form/formUtils/Button";
 import QuickLink from "../form/formUtils/QuickLink";
@@ -13,23 +22,29 @@ import axios from "axios";
 
 function SignUpForm() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const [user, setUser] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+  const user = useSelector(selectUserDataForSignup);
+  const emailIsValid = useSelector(selectEmailIsValid);
+
+  const clearData = location.state ? location.state.clearData : true;
+
   const [errors, setErrors] = useState({});
   const [showSpinner, setShowSpinner] = useState(false);
   const [file, setFile] = useState(null);
-
-  const navigate = useNavigate();
 
   const schema = {
     name: Joi.string().min(3).max(20).required(),
     email: Joi.string().email().required(),
     password: Joi.string().min(5).max(8).required(),
   };
+
+  useEffect(() => {
+    if (clearData === true) {
+      dispatch(clearUserStateForSignup());
+    }
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -38,28 +53,58 @@ function SignUpForm() {
     document.getElementById("myBtn").style.display = "none";
     document.getElementById("myLink").style.display = "none";
 
-    const result = Joi.validate(user, schema, {
-      abortEarly: false,
-    });
+    const result = Joi.validate(
+      { name: user.name, email: user.email, password: user.password },
+      schema,
+      {
+        abortEarly: false,
+      }
+    );
 
     const { error } = result;
     if (!error) {
       try {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("name", user.name);
-        formData.append("email", user.email);
-        formData.append("password", user.password);
+        if (emailIsValid === false) {
+          const headers = {};
+          const response1 = await axios.post(
+            verifyEmailApiUrl,
+            { email: user.email, name: user.name },
+            { headers }
+          );
 
-        const response = await axios.post(registerApiUrl, formData);
+          if (response1.status === 200) {
+            const otp = response1.data.otp;
+            const userId = response1.data.id;
+            const headerVal = response1.data.headerVal
+              ? response1.data.headerVal
+              : "";
 
-        if (response.status === 200) {
-          alert(response.data);
-          clearSignedUpUserState();
-          dispatch(setUserDataForLogin({ email: user.email, password: "" }));
-          navigate("/logIn", { state: { cleardata: false } });
+            navigate("/verifyOtp", {
+              state: { userId: userId, otp: otp, headerVal: headerVal },
+            });
+          }
+        }
 
-          return;
+        if (emailIsValid === true) {
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("name", user.name);
+          formData.append("email", user.email);
+          formData.append("password", user.password);
+          const response = await axios.post(registerApiUrl, formData);
+          if (response.status === 200) {
+            toast.success(response.data, {
+              onClose: () => {
+                dispatch(clearUserStateForSignup());
+                dispatch(setEmailIsValid(false));
+                dispatch(
+                  setUserDataForLogin({ email: user.email, password: "" })
+                );
+                navigate("/logIn", { state: { cleardata: false } });
+                return;
+              },
+            });
+          }
         }
       } catch (err) {
         document.getElementById("myBtn").style.display = "flex";
@@ -95,6 +140,7 @@ function SignUpForm() {
   };
 
   const handleOnChange = (event) => {
+    dispatch(setEmailIsValid(false));
     const { name, value } = event.target;
     let errorData = { ...errors };
     const errorMessage = validateProperty(event, schema);
@@ -106,16 +152,8 @@ function SignUpForm() {
     let userData = { ...user };
     userData[name] = value;
 
-    setUser(userData);
+    dispatch(setUserDataForSignup(userData));
     setErrors(errorData);
-  };
-
-  const clearSignedUpUserState = () => {
-    setUser({
-      name: "",
-      email: "",
-      password: "",
-    });
   };
 
   return (
@@ -190,6 +228,12 @@ function SignUpForm() {
           wrapperClass=""
         />
       </div>
+      <ToastContainer
+        hideProgressBar="true"
+        position="top-center"
+        autoClose={1000}
+        theme="dark"
+      />
     </>
   );
 }
