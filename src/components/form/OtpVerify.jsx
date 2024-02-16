@@ -231,7 +231,7 @@ function OtpVerify() {
           >
             <span
               id="resend"
-              className="text-sm text-gray-500 w-full font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+              className="text-sm w-full font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
               style={{ cursor: "pointer" }}
               onClick={handleResend}
             >
